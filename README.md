@@ -17,7 +17,13 @@ This project is a **FastAPI-based Financial Document Management System** that en
 * 🔍 Semantic Search using RAG
 
 ---
+## 🔄 RAG Pipeline
 
+User Query  
+→ Embedding  
+→ FAISS Vector Search  
+→ Retrieve Top Chunks  
+→ Return Relevant Content
 ## 🏗️ Architecture
 
 ```text
@@ -85,7 +91,13 @@ app/
  ├── db/
  └── main.py
 ```
+## 🧪 Example Output
 
+Input:
+"machine learning"
+
+Output:
+Top relevant document chunks returned from FAISS search.
 ---
 
 ## 🎯 Outcome
