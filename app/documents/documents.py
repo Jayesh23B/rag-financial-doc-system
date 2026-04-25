@@ -14,10 +14,6 @@ from app.utils.vector_store import add_embedding, search_embedding
 
 router = APIRouter(prefix="/documents", tags=["Documents"])
 
-
-# =========================
-# ✅ DB Dependency
-# =========================
 def get_db():
     db = SessionLocal()
     try:
@@ -25,10 +21,6 @@ def get_db():
     finally:
         db.close()
 
-
-# =========================
-# 🚀 Upload Document (RAG Pipeline)
-# =========================
 @router.post("/upload")
 def upload_document(
     file: UploadFile = File(...),
@@ -41,11 +33,11 @@ def upload_document(
 
         file_path = os.path.join(upload_dir, file.filename)
 
-        # Save file
+    
         with open(file_path, "wb") as buffer:
             shutil.copyfileobj(file.file, buffer)
 
-        # Get logged-in user
+        
         db_user = db.query(models.User).filter(
             models.User.email == user.get("sub")
         ).first()
@@ -53,17 +45,17 @@ def upload_document(
         if not db_user:
             raise HTTPException(status_code=404, detail="User not found")
 
-        # 🔥 Step 1: Extract text
+        
         text_content = extract_text_from_pdf(file_path)
 
-        # 🔥 Step 2: Chunking
+       
         chunks = chunk_text(text_content)
 
-        # 🔥 Step 3: Process chunks
+       
         for i, chunk in enumerate(chunks):
             embedding_vector = get_embedding(chunk)
 
-            # Store in DB
+            
             new_doc = models.Document(
                 title=file.filename,
                 company_name="demo_company",
@@ -76,7 +68,7 @@ def upload_document(
             )
             db.add(new_doc)
 
-            # Store in FAISS
+            
             add_embedding(embedding_vector, {
                 "content": chunk,
                 "title": file.filename
@@ -94,9 +86,7 @@ def upload_document(
         raise HTTPException(status_code=500, detail=str(e))
 
 
-# =========================
-# 🔍 Basic Metadata Search
-# =========================
+
 @router.get("/search")
 def search_documents(
     company_name: str,
@@ -108,9 +98,6 @@ def search_documents(
     ).all()
 
 
-# =========================
-# 🔥 RAG SEARCH (FAISS)
-# =========================
 @router.post("/rag/search")
 def rag_search(
     query: str,
@@ -130,9 +117,7 @@ def rag_search(
         raise HTTPException(status_code=500, detail=str(e))
 
 
-# =========================
-# 🔥 INDEX DOCUMENT (REQUIRED BY ASSIGNMENT)
-# =========================
+
 @router.post("/rag/index-document")
 def index_document(
     title: str,
@@ -160,9 +145,6 @@ def index_document(
     }
 
 
-# =========================
-# 🔥 CONTEXT API (REQUIRED)
-# =========================
 @router.get("/rag/context/{title}")
 def get_document_context(
     title: str,
