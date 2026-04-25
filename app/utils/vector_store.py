@@ -1,12 +1,10 @@
 import faiss
 import numpy as np
 
-# dimension of embedding (MiniLM = 384)
 dimension = 384
 
 index = faiss.IndexFlatL2(dimension)
 
-# store mapping
 doc_store = []
 
 def add_embedding(embedding, metadata):
