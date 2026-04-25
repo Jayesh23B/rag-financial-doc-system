@@ -5,8 +5,7 @@ from app.auth.auth import router as auth_router
 from app.roles.roles import router as roles_router
 from app.documents.documents import router as doc_router
 
-app = FastAPI()   # ✅ MUST come before include_router
-
+app = FastAPI()  
 Base.metadata.create_all(bind=engine)
 
 app.include_router(auth_router)
